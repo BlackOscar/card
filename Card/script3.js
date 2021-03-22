@@ -1,102 +1,92 @@
 var allDiv = document.querySelectorAll('div');
 var draggedItem = null;
-var cardList = {
-    'cards': ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K']
-}
+var cardList = [
+    'A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K',
+    'A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K',
+    'A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K',
+    'A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K',
+    'A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K',
+    'A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K',
+    'A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K',
+    'A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K',
+    'A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K',
+    'A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K',
+    'A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K'
+]
 var cardId = 0;
 var styleTop = 40;
+var firstTimeRandom = true;
+var countAddRandomCard = 0;
+var score = 0;
 
 function randomCard() {
-    let random = Math.floor(Math.random() * 13);
-    return cardList['cards'][random];
+    let random = Math.floor(Math.random() * cardList.length);
+    let indexInCardList = cardList.indexOf(cardList[random])
+        //indexInCardList.splice(indexInCardList, 1)
+    return cardList[random];
 }
 
 async function addRandomCardBtn() {
-    for (let i = 0; i < allDiv.length; i++) {
-        let currentDiv = allDiv[i]
+    if (countAddRandomCard < 6) {
+        for (let i = 0; i < allDiv.length; i++) {
+            let currentDiv = allDiv[i];
             //fix = 40;
-        let random = randomCard();
-        let img = document.createElement('img');
-        let newDiv = document.createElement('div')
-        newDiv.className = 'child'
-        img.src = `images/${random}.png`;
-        img.draggable = 'true';
-        if (random === 'A') {
-            random = '1';
-        } else if (random === "J") {
-            random = '11';
-        } else if (random === "Q") {
-            random = '12';
-        } else if (random === "K") {
-            random = '13';
-            newDiv.setAttribute('cardName', 'K');
-        } else {
-            newDiv.setAttribute('cardName', 'card');
+            let random = randomCard();
+            let indexInCardList = cardList.indexOf(random)
+            cardList.splice(indexInCardList, 1)
+            let img = document.createElement('img');
+            let newDiv = document.createElement('div');
+            newDiv.className = 'child';
+            newDiv.style.top = `${styleTop}px`;
+            img.src = `images/${random}.png`;
+            img.draggable = 'true';
+            if (random === 'A') {
+                random = '1';
+            } else if (random === "J") {
+                random = '11';
+            } else if (random === "Q") {
+                random = '12';
+            } else if (random === "K") {
+                random = '13';
+                newDiv.setAttribute('cardName', 'K');
+            } else {
+                newDiv.setAttribute('cardName', 'card');
+            }
+            img.setAttribute('value', random);
+            img.id = cardId;
+            img.style.position = "absolute";
+            img.style.left = "34px";
+            cardId += 1;
+            newDiv.appendChild(img);
+            let divChild = currentDiv.querySelectorAll('.child');
+            if (divChild.length === 0) {
+                currentDiv.appendChild(newDiv);
+            } else {
+                let oldDiv = divChild[divChild.length - 1];
+                oldDiv.appendChild(newDiv);
+            }
+            if (!firstTimeRandom) {
+                await sleep(200);
+            }
         }
-        img.setAttribute('value', random);
-        img.id = cardId;
-        img.style.position = "absolute";
-        newDiv.style.top = `${styleTop}px`;
-        img.style.left = "34px";
-        cardId += 1;
-        newDiv.appendChild(img);
-        let divChild = currentDiv.querySelectorAll('.child')
-        if (divChild.length === 0) {
-            currentDiv.appendChild(newDiv);
-        } else {
-            let oldDiv = divChild[divChild.length - 1];
-            oldDiv.appendChild(newDiv);
-        }
-        await sleep(200)
+        setEventDivChild();
     }
-    setDivChild();
+    countAddRandomCard++;
 }
 
 function addRandomCardAuto() {
-    for (let i = 0; i < allDiv.length; i++) {
-        let currentDiv = allDiv[i];
-        //fix = 40;
-        let random = randomCard();
-        let img = document.createElement('img');
-        let newDiv = document.createElement('div');
-        newDiv.className = 'child';
-        img.src = `images/${random}.png`;
-        img.draggable = 'true';
-        if (random === 'A') {
-            random = '1';
-        } else if (random === "J") {
-            random = '11';
-        } else if (random === "Q") {
-            random = '12';
-        } else if (random === "K") {
-            random = '13';
-            newDiv.setAttribute('cardName', 'K');
-        } else {
-            newDiv.setAttribute('cardName', 'card');
-        }
-        img.setAttribute('value', random);
-        img.id = cardId;
-        img.style.position = "absolute";
-        newDiv.style.top = "0px";
-        img.style.left = "34px";
-        cardId += 1;
-        newDiv.appendChild(img);
-        let divChild = currentDiv.querySelectorAll('.child');
-        if (divChild.length === 0) {
-            currentDiv.appendChild(newDiv);
-        } else {
-            let oldDiv = divChild[divChild.length - 1];
-            oldDiv.appendChild(newDiv);
-        }
+    for (let i = 0; i < 7; i++) {
+        styleTop = 0
+        addRandomCardBtn();
     }
-    setDivChild();
+    firstTimeRandom = false;
+    styleTop = 40;
+    countAddRandomCard = 0;
 }
 
-for (let i = 0; i < 10; i++) {
-    addRandomCardAuto();
-}
+addRandomCardAuto();
 
-function setDivChild() {
+function setEventDivChild() {
     let divChilds = document.querySelectorAll('.child');
     if (divChilds.length > 0) {
         for (let i = 0; i < divChilds.length; i++) {
@@ -105,11 +95,11 @@ function setDivChild() {
                 //k day event len div cha
                 event.stopPropagation();
                 let checkDivIsValid = this.querySelectorAll('img');
-                console.log(checkDivIsValid)
+                //console.log(checkDivIsValid)
                 for (let i = 0; i < checkDivIsValid.length - 1; i++) {
-                    count = 0
+                    //count = 0;
                     if (checkDivIsValid[i].getAttribute("value") - checkDivIsValid[i + 1].getAttribute("value") != 1) {
-                        return
+                        return;
                     }
                 }
                 draggedItem = item;
@@ -122,27 +112,26 @@ function setDivChild() {
                     draggedItem.style.display = 'block';
                 }
                 draggedItem = null;
-                console.log('end');
+                //console.log('end');
             })
         }
     }
-
 }
 
 function sleep(ms) {
     return new Promise(resolve => {
-        console.log(resolve);
         setTimeout(resolve, ms);
     });
 }
 
 function drop() {
     let divChild = this.querySelectorAll('.child')
-
-    let score = 0;
     let divChildImg = this.querySelectorAll('img')
     if (divChild.length === 0) {
         this.appendChild(draggedItem);
+        if (draggedItem.style.top === '40px') {
+            draggedItem.style.top = '0px';
+        }
     } else {
         let oldChildImg = divChild[divChild.length - 1].querySelectorAll('img')
         let oldChildImgVl = oldChildImg[oldChildImg.length - 1].getAttribute('value')
@@ -159,19 +148,20 @@ function drop() {
             draggedItem.style.position = "absolute";
             draggedItem.style.left = "0px";
             let lastDivChildImg = lastDivChild.querySelectorAll('img');
-            checkWin(divChild);
+            checkKdiv(divChild);
         }
     }
+    checkWin()
+
 }
 
-function checkWin(divChild) {
+function checkKdiv(divChild) {
     let divK;
     for (let i = 0; i < divChild.length; i++) {
         if (divChild[i].getAttribute('cardName') === "K") {
             divK = divChild[i]
         }
     }
-
     if (divK) {
         let Kimg = divK.querySelectorAll('img')
         let curr
@@ -183,23 +173,19 @@ function checkWin(divChild) {
                 return
             }
         }
-        if (Kimg.length === 3) {
+        if (Kimg.length === 13) {
             alert('ĐÚNG LÀ CON TRAI CỦA TA!')
-            let score = parseInt(document.getElementById('score').innerHTML)
+            score = parseInt(document.getElementById('score').innerHTML)
             document.getElementById('score').innerHTML = score + 1
             divK.remove()
         }
-
     }
+}
 
-    console.log('k', divK)
-        // if (lastDivChildImg.length === 4) {
-        //     console.log("adfgashfjgadhjsfghjasdfhj")
-        //     alert('GIỎI LẮM! ĐÚNG LÀ CON TRAI CỦA TAAAAAAA!')
-        //     lastDivChild.remove()
-        //     let score = parseInt(document.getElementById('score').innerHTML)
-        //     document.getElementById('score').innerHTML = score + 1
-        // }
+function checkWin() {
+    if (score === 11) {
+        alert('Win cmnr Brooo!')
+    }
 }
 
 function checkValid(old, curr) {
